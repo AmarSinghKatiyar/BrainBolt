@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BrainBolt EduQuiz - Online E-Learning Quiz Platform</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <div class="logo">
+      <span class="logo-icon">🎓</span>
+      <h2>BrainBolt <span>Platform</span></h2>
+    </div>
+    <div class="nav-actions">
+      <button id="leaderboardBtn" class="btn btn-outline" title="View Recent Scores">🏆 Leaderboard</button>
+      <button id="customQuizBtn" class="btn btn-outline" title="Create Custom Questions">➕ Add Question</button>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Screen 1: Quiz Configuration / Home Screen -->
+    <section id="setupScreen" class="card fade-in">
+      <div class="hero-header">
+        <h1>Sharpen Your Knowledge</h1>
+        <p>Choose your favorite subject, select a difficulty level, and challenge yourself!</p>
+      </div>
+
+      <form id="quizForm" class="setup-form">
+        <!-- Category Selection -->
+        <div class="form-group">
+          <label for="categorySelect">📚 Select Category:</label>
+          <select id="categorySelect" required>
+            <option value="random" selected>🎲 Surprise Me! (Fresh Random Questions Each Time)</option>
+            <option value="science">🔬 Science & Nature</option>
+            <option value="general_knowledge">🧠 General Knowledge</option>
+            <option value="history">📜 History</option>
+            <option value="geography">🌍 Geography & World</option>
+            <option value="music">🎵 Music & Entertainment</option>
+            <option value="film_and_tv">🎬 Movies & TV</option>
+            <option value="sport_and_leisure">⚽ Sports & Games</option>
+            <option value="18">💻 Computer Science & IT</option>
+            <option value="builtin_web">🌐 Web Development (HTML/CSS/JS)</option>
+            <option value="custom">📝 My Custom Saved Questions</option>
+          </select>
+        </div>
+
+        <!-- Difficulty Selection -->
+        <div class="form-group">
+          <label for="difficultySelect">⚡ Difficulty Level:</label>
+          <select id="difficultySelect">
+            <option value="easy">Easy (Beginner friendly)</option>
+            <option value="medium" selected>Medium (Moderate challenge)</option>
+            <option value="hard">Hard (Advanced)</option>
+          </select>
+        </div>
+
+        <!-- Number of Questions -->
+        <div class="form-group">
+          <label for="amountSelect">🔢 Number of Questions:</label>
+          <select id="amountSelect">
+            <option value="5">5 Questions</option>
+            <option value="10" selected>10 Questions</option>
+            <option value="15">15 Questions</option>
+          </select>
+        </div>
+
+        <!-- Timer Mode -->
+        <div class="form-group">
+          <label for="timerSelect">⏱️ Timer Per Question:</label>
+          <select id="timerSelect">
+            <option value="15">15 Seconds (Fast-paced)</option>
+            <option value="30" selected>30 Seconds (Standard)</option>
+            <option value="60">60 Seconds (Relaxed)</option>
+            <option value="0">No Timer (Study Mode)</option>
+          </select>
+        </div>
+
+        <button type="submit" id="startQuizBtn" class="btn btn-primary btn-block">🚀 Start Quiz</button>
+      </form>
+    </section>
+
+    <!-- Loading Spinner Screen -->
+    <section id="loadingScreen" class="card hidden text-center">
+      <div class="spinner"></div>
+      <h2>Fetching Questions...</h2>
+      <p>Connecting to free quiz database...</p>
+    </section>
+
+    <!-- Screen 2: Active Quiz Interface -->
+    <section id="quizScreen" class="card hidden">
+      <!-- Top info bar -->
+      <div class="quiz-status-bar">
+        <div class="badge" id="categoryBadge">Computer Science</div>
+        <div class="quiz-timer" id="timerBox">
+          ⏳ <span id="timerText">30</span>s
+        </div>
+        <div class="score-pill">
+          Score: <span id="liveScore">0</span>
+        </div>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <div class="question-tracker">
+        Question <span id="currentQuestionNum">1</span> of <span id="totalQuestionsNum">10</span>
+      </div>
+
+      <!-- Question Card -->
+      <div class="question-box">
+        <h2 id="questionText">Loading question text here...</h2>
+      </div>
+
+      <!-- Lifelines -->
+      <div class="lifeline-bar">
+        <button id="fiftyFiftyBtn" class="btn btn-sm btn-lifeline">💡 50:50 Lifeline (<span id="lifelineCount">1</span> left)</button>
+      </div>
+
+      <!-- Options Grid -->
+      <div class="options-grid" id="optionsGrid">
+        <!-- Option buttons dynamically generated by JS -->
+      </div>
+
+      <!-- Feedback Banner -->
+      <div id="feedbackBanner" class="feedback-banner hidden">
+        <span id="feedbackIcon"></span>
+        <span id="feedbackMessage"></span>
+      </div>
+
+      <!-- Bottom actions -->
+      <div class="quiz-footer">
+        <button id="quitQuizBtn" class="btn btn-outline">Quit Quiz</button>
+        <button id="nextQuestionBtn" class="btn btn-primary hidden">Next Question ➔</button>
+      </div>
+    </section>
+
+    <!-- Screen 3: Results & Review Screen -->
+    <section id="resultScreen" class="card hidden fade-in text-center">
+      <div class="result-header">
+        <div id="resultEmoji" class="result-emoji">🎉</div>
+        <h1 id="resultTitle">Quiz Completed!</h1>
+        <p id="resultSubtitle">Here is how you performed:</p>
+      </div>
+
+      <div class="score-card">
+        <div class="score-circle">
+          <span id="scorePercentage">80%</span>
+          <small>Accuracy</small>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-number text-success" id="correctCount">8</span>
+            <span class="stat-label">Correct</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number text-danger" id="wrongCount">2</span>
+            <span class="stat-label">Incorrect</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" id="finalScore">80</span>
+            <span class="stat-label">Points</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" id="timeTaken">120s</span>
+            <span class="stat-label">Total Time</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="result-actions">
+        <button id="restartBtn" class="btn btn-primary">🔄 Retake Quiz</button>
+        <button id="toggleReviewBtn" class="btn btn-outline">📝 Review Answers</button>
+        <button id="homeBtn" class="btn btn-secondary">🏠 Back to Home</button>
+      </div>
+
+      <!-- Detailed Question Breakdown -->
+      <div id="reviewContainer" class="review-container hidden">
+        <h3>Question Breakdown</h3>
+        <div id="reviewList" class="review-list">
+          <!-- Dynamically populated review items -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal 1: Leaderboard / History -->
+  <div id="leaderboardModal" class="modal hidden">
+    <div class="modal-content card">
+      <div class="modal-header">
+        <h2>🏆 Recent Quiz History</h2>
+        <button class="close-btn" id="closeLeaderboardBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="historyListContainer">
+          <!-- Populated from localStorage -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="clearHistoryBtn" class="btn btn-danger btn-sm">Clear History</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Add Custom Question -->
+  <div id="customModal" class="modal hidden">
+    <div class="modal-content card">
+      <div class="modal-header">
+        <h2>➕ Add Custom Question</h2>
+        <button class="close-btn" id="closeCustomBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="customQuestionForm">
+          <div class="form-group">
+            <label for="customQuestionInput">Question:</label>
+            <input type="text" id="customQuestionInput" placeholder="e.g. Which language runs in a web browser?" required>
+          </div>
+          <div class="form-group">
+            <label for="customCorrectInput">Correct Answer:</label>
+            <input type="text" id="customCorrectInput" placeholder="e.g. JavaScript" required>
+          </div>
+          <div class="form-group">
+            <label for="customWrong1">Wrong Option 1:</label>
+            <input type="text" id="customWrong1" placeholder="e.g. Python" required>
+          </div>
+          <div class="form-group">
+            <label for="customWrong2">Wrong Option 2:</label>
+            <input type="text" id="customWrong2" placeholder="e.g. C++" required>
+          </div>
+          <div class="form-group">
+            <label for="customWrong3">Wrong Option 3:</label>
+            <input type="text" id="customWrong3" placeholder="e.g. Java" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Save Question</button>
+        </form>
+        <p id="customSavedMsg" class="text-success hidden" style="margin-top: 10px; text-align: center;">✅ Question saved successfully to local storage!</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>EduQuiz E-Learning Platform &bull; Made with HTML, CSS & JavaScript</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
